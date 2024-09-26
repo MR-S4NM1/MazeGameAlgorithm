@@ -30,6 +30,13 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField, HideInInspector] Rigidbody _rb;
     [SerializeField, HideInInspector] MeshRenderer _meshRenderer;
     [SerializeField, HideInInspector] MeshFilter _meshFilter;
+    [SerializeField, HideInInspector] GameObject _playerModel;
+
+    #endregion
+
+    #region References
+
+    [SerializeField, HideInInspector] private Animator _animator;
 
     #endregion
 
@@ -42,6 +49,8 @@ public class PlayerBehaviour : MonoBehaviour
     void FixedUpdate()
     {
         PlayerMovement();
+        AnimatorHandler();
+        ModelDirectionRotation();
     }
     #endregion
 
@@ -93,5 +102,20 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
+    private void AnimatorHandler()
+    {
+        _animator.SetFloat("VelocityMagnitude", _rb.velocity.magnitude);
+    }
+
+    private void ModelDirectionRotation()
+    {
+        if (_rb.velocity.magnitude > 0.1f)
+        {
+            Vector3 velocityDirection = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
+            Quaternion modelRotation = Quaternion.LookRotation(velocityDirection);
+            _playerModel.transform.rotation = Quaternion.Euler(0, modelRotation.eulerAngles.y, 0);
+        }
+        
+    }
     #endregion
 }
