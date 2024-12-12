@@ -13,9 +13,24 @@ public class NewMazeGenerator : MonoBehaviour
     private RandomCostGraph graph;
     private MST mst;
 
+    public static NewMazeGenerator Instance;
+
+
+    private void Awake()
+    {
+        if(Instance != null && Instance != this)
+        {
+            Destroy(Instance);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+
     private void Start()
     {
-        InvokeRepeating("CreateMaze", 0.1f, m_timeBetweenMazes);
+        CreateMaze();  
     }
 
     private void FixedUpdate()
@@ -59,9 +74,15 @@ public class NewMazeGenerator : MonoBehaviour
         CreateMazeWalls();
         CreateMazeBorders();
         transform.Rotate(new Vector3(-90, 0, 0));
+        transform.localScale = Vector3.one * 2;
         MoveMaze();
-        Invoke("MoveMaze", m_timeBetweenMazes - 1.5f);
-        Invoke("ClearMaze", m_timeBetweenMazes - 0.7f);
+    }
+
+    public void ResetMaze()
+    {
+        MoveMaze();
+        Invoke("ClearMaze", 1.5f);
+        Invoke("CreateMaze", 1.6f);
     }
 
     void CreateGraph()
@@ -141,6 +162,7 @@ public class NewMazeGenerator : MonoBehaviour
             Destroy(child.gameObject);
         }
         transform.Rotate(new Vector3(90, 0, 0));
+        transform.localScale = Vector3.one;
     }
 
 }
